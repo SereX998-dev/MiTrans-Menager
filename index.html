@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MI-Trans Manager</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>MI-Trans Manager</span>
+        </div>
+
+        <nav>
+
+            <a href="#" class="active" data-section="documentsSection">
+                <i class="fa-solid fa-file-lines"></i>
+                Dokumenty CMR
+            </a>
+
+            <a href="#" data-section="roadCardsSection">
+                <i class="fa-solid fa-road"></i>
+                Karta Drogowa
+            </a>
+
+            <a href="#" data-section="contractorsSection">
+                <i class="fa-solid fa-users"></i>
+                Kierowcy
+            </a>
+
+            <a href="#" data-section="fleetSection">
+                <i class="fa-solid fa-truck"></i>
+                Flota
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- MAIN -->
+
+    <main class="content">
+
+        <!-- HEADER -->
+
+        <header class="topbar">
+
+            <div>
+                <h1>Panel Zarządzania</h1>
+                <p>Nowoczesny system dokumentów transportowych</p>
+                <div id="userStatus" class="user-status"></div>
+            </div>
+
+            <div class="topbar-actions">
+                <label class="theme-switch" for="themeSwitch">
+                    <span><i class="fa-solid fa-sun"></i></span>
+                    <input type="checkbox" id="themeSwitch">
+                    <span class="slider"></span>
+                    <span><i class="fa-solid fa-moon"></i></span>
+                </label>
+            </div>
+
+        </header>
+
+        <!-- STATYSTYKI -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+                <i class="fa-solid fa-file-lines"></i>
+                <div>
+                    <h3 id="cmrCount">0</h3>
+                    <p>Dokumentów CMR</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-road"></i>
+                <div>
+                    <h3 id="roadCardCount">0</h3>
+                    <p>Karty drogowe</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-users"></i>
+                <div>
+                    <h3 id="driverCount">0</h3>
+                    <p>Kierowców</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-truck-fast"></i>
+                <div>
+                    <h3 id="truckCount">0</h3>
+                    <p>Ciężarówek</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-bus"></i>
+                <div>
+                    <h3 id="autokarCount">0</h3>
+                    <p>Autokarów</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- LISTA DOKUMENTÓW -->
+
+        <section class="panel" id="documentsSection">
+
+            <div class="panel-header">
+
+                <h2>
+                    <i class="fa-solid fa-file-lines"></i>
+                    Dokumenty CMR
+                </h2>
+
+                <div class="panel-header-actions">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Szukaj dokumentów..."
+                    >
+                    <button id="newCMRBtn" class="btn btn-primary">
+                        <i class="fa-solid fa-plus"></i>
+                        Nowy CMR
+                    </button>
+                </div>
+
+            </div>
+
+            <table>
+
+                <thead>
+
+                <tr>
+                    <th>Numer CMR</th>
+                    <th>Nadawca</th>
+                    <th>Odbiorca</th>
+                    <th>Nazwa towaru</th>
+                    <th>Utworzone przez</th>
+                    <th>Akcje</th>
+                </tr>
+
+                </thead>
+
+                <tbody id="cmrTableBody">
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <!-- KIEROWCY -->
+
+        <section class="panel hidden" id="roadCardsSection">
+
+            <div class="panel-header">
+
+                <h2>
+                    <i class="fa-solid fa-road"></i>
+                    Karta Drogowa
+                </h2>
+
+                <div class="panel-header-actions">
+                    <input
+                        type="text"
+                        id="roadCardSearchInput"
+                        placeholder="Szukaj Karty"
+                    >
+                    <button type="button" id="newRoadCardBtn" class="btn btn-primary">
+                        <i class="fa-solid fa-plus"></i>
+                        Nowa Karta Drogowa
+                    </button>
+                </div>
+
+            </div>
+
+            <section id="roadCardModal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>
+                            <i class="fa-solid fa-road"></i>
+                            Nowa Karta Drogowa
+                        </h2>
+                        <button id="closeRoadCardModal">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <form id="roadCardForm" class="roadcard-form">
+
+                        <div class="grid">
+                                <div class="form-group full-span">
+                                <label>Rodzaj pojazdu</label>
+                                <div class="road-card-type-group">
+                                    <button type="button" class="road-card-type-btn" data-type="Ciężarówka" aria-pressed="false">
+                                        <i class="fa-solid fa-truck"></i>
+                                        <span>Ciężarówka</span>
+                                    </button>
+                                    <button type="button" class="road-card-type-btn" data-type="Autokar" aria-pressed="false">
+                                        <i class="fa-solid fa-bus"></i>
+                                        <span>Autokar</span>
+                                    </button>
+                                </div>
+                                </div>
+                                <div id="roadCardTabHeader" class="road-card-tab-header hidden"></div>
+                            <div id="roadCardFieldsContainer" class="hidden"></div>
+
+                            <!-- Templates for separate panes (truck / bus) - rendered into container -->
+                            <div id="roadCardPaneTruck" class="road-card-pane hidden" data-type="Ciężarówka">
+                                <div class="form-group">
+                                    <label>Miejsce Rozpoczęcia</label>
+                                    <input disabled type="text" name="roadStart" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Miejsce Zakończenia</label>
+                                    <input disabled type="text" name="roadEnd" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Data rozpoczęcia i godzina</label>
+                                    <input disabled type="datetime-local" name="roadStartDateTime" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Data zakończenia i godzina</label>
+                                    <input disabled type="datetime-local" name="roadEndDateTime" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kierowca</label>
+                                    <input disabled type="text" name="roadDriver" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nr Rejestracyjny Pojazdu</label>
+                                    <input disabled type="text" name="roadVehicle" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Przebyty dystans (km)</label>
+                                    <input disabled type="number" name="roadDistanceKm" min="0" step="0.1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Zatankowane paliwo</label>
+                                    <input disabled type="text" name="roadFuelRefilled" placeholder="np. 150 l">
+                                </div>
+                                <div class="form-group full-span">
+                                    <label>Inne koszty</label>
+                                    <textarea disabled name="roadOtherCosts" rows="2" placeholder="np. opłata drogowa, parking"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Numer Karty Drogowej</label>
+                                    <input disabled type="text" name="roadCardNumber" required>
+                                </div>
+                            </div>
+
+                            <div id="roadCardPaneBus" class="road-card-pane hidden" data-type="Autokar">
+                                <div class="form-group">
+                                    <label>Miejsce Rozpoczęcia</label>
+                                    <input disabled type="text" name="roadStart" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Miejsce Zakończenia</label>
+                                    <input disabled type="text" name="roadEnd" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Data rozpoczęcia i godzina</label>
+                                    <input disabled type="datetime-local" name="roadStartDateTime" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Data zakończenia i godzina</label>
+                                    <input disabled type="datetime-local" name="roadEndDateTime" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kierowca</label>
+                                    <input disabled type="text" name="roadDriver" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nr Rejestracyjny Autokaru</label>
+                                    <input disabled type="text" name="roadVehicle" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Przebyty dystans (km)</label>
+                                    <input disabled type="number" name="roadDistanceKm" min="0" step="0.1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Zatankowane paliwo</label>
+                                    <input disabled type="text" name="roadFuelRefilled" placeholder="np. 150 l">
+                                </div>
+                                <div class="form-group full-span">
+                                    <label>Inne koszty</label>
+                                    <textarea disabled name="roadOtherCosts" rows="2" placeholder="np. opłata drogowa, parking"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Numer Karty Drogowej</label>
+                                    <input disabled type="text" name="roadCardNumber" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-danger" id="cancelRoadCardBtn">
+                                <i class="fa-solid fa-xmark"></i>
+                                Anuluj
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                Zapisz
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+
+            <table class="roadcards-table">
+                <thead>
+                    <tr>
+                        <th>Numer karty</th>
+                        <th>Kierowca</th>
+                        <th>Dystans (km)</th>
+                        <th>Rodzaj pojazdu</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody id="roadCardsTableBody"></tbody>
+            </table>
+        </section>
+
+            <section id="viewRoadCardModal" class="modal hidden">
+
+                <div class="modal-content view-modal-content">
+
+                    <div class="modal-header">
+
+                        <h2>
+                            Karta Drogowa
+                            <span id="viewRoadNumberBadge" class="view-number-badge"></span>
+                        </h2>
+
+                        <button id="closeViewRoadCardModal">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+
+                    </div>
+
+                    <div id="viewRoadDocContent" class="view-doc-content">
+
+                        <div class="view-grid">
+
+                            <div class="view-field">
+
+                                <span class="view-label">Miejsce rozpoczęcia</span>
+                                <span id="viewRoadStart"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Miejsce zakończenia</span>
+                                <span id="viewRoadEnd"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Data rozpoczęcia</span>
+                                <span id="viewRoadStartDateTime"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Data zakończenia</span>
+                                <span id="viewRoadEndDateTime"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Kierowca</span>
+                                <span id="viewRoadDriver"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Nr pojazdu</span>
+                                <span id="viewRoadVehicle"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Przebyty dystans (km)</span>
+                                <span id="viewRoadDistanceKm"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Zatankowane paliwo</span>
+                                <span id="viewRoadFuelRefilled"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Inne koszty</span>
+                                <span id="viewRoadOtherCosts"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Utworzone przez</span>
+                                <span id="viewRoadCreatedBy"></span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        <section class="panel hidden" id="fleetSection">
+
+            <div class="panel-header">
+
+                <h2>
+                    <i class="fa-solid fa-truck"></i>
+                    Flota
+                </h2>
+
+            </div>
+
+            <div class="fleet-grid">
+
+                <div class="fleet-card">
+                    <h3>Ciężarówki</h3>
+                    <table class="fleet-table">
+                        <thead>
+                            <tr>
+                                <th>Właściciel</th>
+                                <th>Nr rejestracyjny</th>
+                                <th>Marka</th>
+                                <th>Model</th>
+                            </tr>
+                        </thead>
+                        <tbody id="truckFleetTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="fleet-card">
+                    <h3>Autokary</h3>
+                    <table class="fleet-table">
+                        <thead>
+                            <tr>
+                                <th>Właściciel</th>
+                                <th>Nr rejestracyjny</th>
+                                <th>Marka</th>
+                                <th>Model</th>
+                            </tr>
+                        </thead>
+                        <tbody id="autokarFleetTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="fleet-card">
+                    <h3>Naczepy</h3>
+                    <table class="fleet-table">
+                        <thead>
+                            <tr>
+                                <th>Właściciel</th>
+                                <th>Nr rejestracyjny</th>
+                                <th>Rodzaj naczepy</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trailerFleetTableBody"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="panel hidden" id="contractorsSection">
+
+            <div class="panel-header">
+
+                <h2>
+                    <i class="fa-solid fa-user"></i>
+                    Kierowcy
+                </h2>
+
+                <div class="panel-header-actions">
+                    <input
+                        type="text"
+                        id="driverSearchInput"
+                        placeholder="Szukaj kierowcy..."
+                    >
+                    <button type="button" id="openDriverModalBtn" class="btn btn-primary hidden">
+                        <i class="fa-solid fa-plus"></i>
+                        Dodaj kierowcę
+                    </button>
+                </div>
+
+            </div>
+
+            <section id="driverModal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>
+                            <i class="fa-solid fa-user-plus"></i>
+                            Dodaj / edytuj kierowcę
+                        </h2>
+                        <button id="closeDriverModal">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <form id="driverForm" class="contractor-form">
+
+                <div class="form-group full-span driver-edit-banner hidden" id="driverEditInfo">
+                    <label>Edytujesz kierowcę</label>
+                    <input type="text" id="driverEditName" readonly>
+                </div>
+
+                <div class="grid">
+
+                    <div class="form-group">
+                        <label>Imię i nazwisko</label>
+                        <input type="text" id="driverName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Typ kierowcy</label>
+                        <select id="driverType" required>
+                            <option value="">Wybierz...</option>
+                            <option value="Ciężarówka">Ciężarówka</option>
+                            <option value="Autokar">Autokar</option>
+                            <option value="Obie">Obie</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rola na stronie</label>
+                        <select id="driverRole" required>
+                            <option value="">Wybierz...</option>
+                            <option value="Właściciel Firmy">Właściciel Firmy</option>
+                            <option value="Zastępca Właściciela Firmy">Zastępca Właściciela Firmy</option>
+                            <option value="Menager">Menager</option>
+                            <option value="Kierowca">Kierowca</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Login kierowcy</label>
+                        <input type="text" id="driverLogin">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hasło kierowcy</label>
+                        <input type="password" id="driverPassword">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rodzaj wkładki</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="driverInsertType" value="Transport Gabarytów">
+                                <span>Transport Gabarytów</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="driverInsertType" value="Transport ADR'ów">
+                                <span>Transport ADR'ów</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="driverInsertType" value="Transport Odpadów">
+                                <span>Transport Odpadów</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="driverInsertType" value="Transport Silosów">
+                                <span>Transport Silosów</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" class="driverInsertType" value="Transport Wywrotką">
+                                <span>Transport Wywrotką</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-span trailer-section hidden">
+                        <label>Informacje o naczepie</label>
+                        <div id="trailerFieldsContainer" class="vehicle-fields-container"></div>
+                        <button type="button" id="addTrailerBtn" class="btn btn-secondary" style="margin-top:16px;">
+                            <i class="fa-solid fa-plus"></i>
+                            Dodaj naczepę
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="form-group vehicle-section">
+                    <label>Informacje o pojeździe</label>
+                    <div id="vehicleFieldsContainer" class="vehicle-fields-container">
+                        <div class="vehicle-card">
+                            <div class="grid">
+                                <div class="form-group">
+                                    <label>Typ pojazdu</label>
+                                    <select class="driverVehicleType" required>
+                                        <option value="">Wybierz...</option>
+                                        <option value="Ciężarówka">Ciężarówka</option>
+                                        <option value="Autokar">Autokar</option>
+                                        <option value="Naczepa">Naczepa</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Właściciel</label>
+                                    <input type="text" class="driverVehicleOwner" placeholder="MI-TRANS" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nr rejestracyjny</label>
+                                    <input type="text" class="driverVehiclePlate" placeholder="AB 12345" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Marka</label>
+                                    <input type="text" class="driverVehicleMake" placeholder="Volvo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Model</label>
+                                    <input type="text" class="driverVehicleModel" placeholder="FH" required>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary removeVehicleBtn hidden">Usuń pojazd</button>
+                        </div>
+                    </div>
+                    <button type="button" id="addVehicleBtn" class="btn btn-secondary" style="margin-top:16px;">
+                        <i class="fa-solid fa-plus"></i>
+                        Dodaj kolejny pojazd
+                    </button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="driverSubmitButton" class="btn btn-primary">
+                        <i class="fa-solid fa-user-plus"></i>
+                        Dodaj kierowcę
+                    </button>
+                    <button type="button" id="driverCancelEditBtn" class="btn btn-secondary hidden">
+                        <i class="fa-solid fa-xmark"></i>
+                        Anuluj edycję
+                    </button>
+                </div>
+
+            </form>
+                </div>
+            </section>
+            <div class="panel-header" style="margin-top:30px;">
+                <h2>Lista kierowców</h2>
+            </div>
+
+            <table class="drivers-table">
+                <thead>
+                    <tr>
+                        <th>Imię i nazwisko</th>
+                        <th>Typ kierowcy</th>
+                        <th>Rola</th>
+                        <th>Rodzaj wkładki</th>
+                        <th>Typ pojazdu</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody id="driversTableBody"></tbody>
+            </table>
+
+        </section>
+
+        <!-- FORMULARZ -->
+
+        <section id="cmrModal" class="modal hidden">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h2>
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                        Nowy Dokument CMR
+                    </h2>
+
+                    <button id="closeModal">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
+                </div>
+
+                <form id="cmrForm">
+
+                    <div class="grid">
+
+                        <div class="form-group">
+                            <label>Nadawca</label>
+                            <input type="text" id="senderName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Adres nadawcy</label>
+                            <input type="text" id="sender" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Odbiorca</label>
+                            <input type="text" id="receiverName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Adres odbiorcy</label>
+                            <input type="text" id="receiver" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Przewoźnik</label>
+                            <input type="text" id="carrier">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nr Rejestracyjny Pojazdu</label>
+                            <input type="text" id="vehicle">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Miejsce załadunku</label>
+                            <input type="text" id="loadingLocation">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Miejsce dostawy</label>
+                            <input type="text" id="deliveryLocation">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Data i godzina załadunku</label>
+                            <input type="datetime-local" id="loadingDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Data i godzina rozładunku</label>
+                            <input type="datetime-local" id="unloadingDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Przebyty dystans (km)</label>
+                            <input type="number" id="distanceKm" min="0" step="0.1">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Zatankowane paliwo</label>
+                            <input type="text" id="fuelRefilled" placeholder="np. 150 l">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Inne koszty</label>
+                            <textarea id="otherCosts" rows="2" placeholder="- opłata drogowa\n- parking\n- dodatkowa obsługa"></textarea>
+                        </div>
+
+                        <div class="form-group full-span">
+                            <label>Instrukcje Nadawcy</label>
+                            <textarea id="senderInstructions" rows="2"></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="goods-section">
+
+                        <div class="goods-header">
+
+                            <h3>Pozycje Towarowe</h3>
+
+                            <button
+                                type="button"
+                                id="addItemBtn"
+                                class="btn btn-secondary">
+
+                                <i class="fa-solid fa-plus"></i>
+                                Dodaj
+
+                            </button>
+
+                        </div>
+
+                        <div id="goodsContainer">
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions-bottom">
+                        <div class="form-group number-inline">
+                            <label>Numer dokumentu</label>
+                            <input type="text" id="cmrNumber">
+                        </div>
+
+                        <div class="form-actions">
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                id="printCmrBtn">
+
+                                <i class="fa-solid fa-print"></i>
+                                Drukuj
+
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                Zapisz
+
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-danger"
+                                id="cancelBtn">
+
+                                <i class="fa-solid fa-xmark"></i>
+                                Anuluj
+
+                            </button>
+
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+            <section id="viewModal" class="modal hidden">
+
+                <div class="modal-content view-modal-content">
+
+                    <div class="modal-header">
+
+                        <h2>
+                            Dokument CMR
+                            <span id="viewDocumentNumberBadge" class="view-number-badge"></span>
+                        </h2>
+
+                        <button id="closeViewModal">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+
+                    </div>
+
+                    <div id="viewDocContent" class="view-doc-content">
+
+                        <div class="view-grid">
+
+                            <div class="view-field">
+                                <span class="view-label">Nadawca</span>
+                                <span id="viewSenderName"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Adres nadawcy</span>
+                                <span id="viewSender"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Odbiorca</span>
+                                <span id="viewReceiverName"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Adres odbiorcy</span>
+                                <span id="viewReceiver"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Miejsce załadunku</span>
+                                <span id="viewLoadingLocation"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Miejsce dostawy</span>
+                                <span id="viewDeliveryLocation"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Data i godzina załadunku</span>
+                                <span id="viewDate"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Data i godzina rozładunku</span>
+                                <span id="viewUnloadingDate"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Przewoźnik</span>
+                                <span id="viewCarrier"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Numer pojazdu</span>
+                                <span id="viewVehicle"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Przebyty dystans (km)</span>
+                                <span id="viewDistanceKm"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Zatankowane paliwo</span>
+                                <span id="viewFuelRefilled"></span>
+                            </div>
+
+                            <div class="view-field">
+                                <span class="view-label">Inne koszty</span>
+                                <span id="viewOtherCosts"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="view-doc-section">
+                            <h3>Instrukcje Nadawcy</h3>
+                            <p id="viewSenderInstructions" class="view-instructions"></p>
+                        </div>
+
+                        <div class="view-doc-section">
+                            <h3>Pozycje towarowe</h3>
+                            <div id="viewGoodsList" class="view-goods-list"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+<script src="script.js"></script>
+
+</body>
+</html>
